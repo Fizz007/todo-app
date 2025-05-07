@@ -46,6 +46,8 @@ export interface SignupFormData {
 }
 
 export interface AuthResponse {
-  user: User;
+  message: string;
   accessToken: string;
+  refreshToken: string;
+  user: User;
 }

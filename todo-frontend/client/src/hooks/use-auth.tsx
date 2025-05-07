@@ -16,7 +16,7 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider");
   }
 
-  const { accessToken, setAccessToken, user, setUser } = authContext;
+  const { accessToken, setAccessToken, refreshToken, setRefreshToken, user, setUser } = authContext;
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginFormData) => {
@@ -31,7 +31,9 @@ export function useAuth() {
     },
     onSuccess: (data) => {
       localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
       setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
       setUser(data.user);
       toast({
         title: "Login successful",
@@ -61,7 +63,10 @@ export function useAuth() {
       }
     },
     onSuccess: (data) => {
+      localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('refreshToken', data.refreshToken);
       setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
       setUser(data.user);
       toast({
         title: "Signup successful",
@@ -91,8 +96,10 @@ export function useAuth() {
       setAuthState(false);
       queryClient.clear();
       setAccessToken(null);
+      setRefreshToken(null);
       setUser(null);
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
@@ -103,8 +110,10 @@ export function useAuth() {
       setAuthState(false);
       queryClient.clear();
       setAccessToken(null);
+      setRefreshToken(null);
       setUser(null);
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       toast({
         title: "Logout failed",
         description: error.message,
@@ -116,6 +125,7 @@ export function useAuth() {
 
   return {
     accessToken,
+    refreshToken,
     user,
     isAuthenticated: !!user,
     isLoading,

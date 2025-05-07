@@ -9,7 +9,7 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'default_refresh_se
 
 const generateTokens = (userId: string, tokenVersion: number) => {
   const accessTokenOptions: SignOptions = {
-    expiresIn: '15m'
+    expiresIn: '60m'
   };
 
   const refreshTokenOptions: SignOptions = {
@@ -58,16 +58,17 @@ export const signup = async (req: Request, res: Response) => {
       user.tokenVersion
     );
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
-
     res.status(201).json({
       message: 'User registered successfully',
       accessToken,
+      refreshToken,
+      user: {
+        _id: user._id,
+        email: user.email,
+        tokenVersion: user.tokenVersion,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
     });
   } catch (error) {
     console.error('Signup error:', error);
@@ -96,6 +97,7 @@ export const login = async (req: Request, res: Response) => {
       user.tokenVersion
     );
 
+    // Set refresh token as HTTP-only cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -115,6 +117,7 @@ export const login = async (req: Request, res: Response) => {
     res.json({
       message: 'Login successful',
       accessToken,
+      refreshToken,
       user: userResponse
     });
   } catch (error) {
@@ -156,5 +159,32 @@ export const refreshToken = async (req: Request, res: Response) => {
     res.json({ accessToken });
   } catch (error) {
     res.status(500).json({ message: 'Error refreshing token' });
+  }
+};
+
+export const getMe = async (req: Request, res: Response) => {
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Create user object without password
+    const userResponse = {
+      _id: user._id,
+      email: user.email,
+      tokenVersion: user.tokenVersion,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
+
+    res.json(userResponse);
+  } catch (error) {
+    console.error('Get me error:', error);
+    res.status(500).json({ message: 'Error getting user data' });
   }
 }; 

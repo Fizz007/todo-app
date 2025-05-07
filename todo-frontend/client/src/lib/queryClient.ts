@@ -8,8 +8,9 @@ export function setAuthState(authenticated: boolean) {
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    const error = new Error(res.statusText);
+    (error as any).status = res.status;
+    throw error;
   }
 }
 
@@ -39,10 +40,35 @@ export async function apiRequest(
   });
 
   if (res.status === 401) {
-    // Clear token and trigger refresh
+    // Create a custom event with the retry function
+    const retryEvent = new CustomEvent('auth:unauthorized', {
+      detail: {
+        retry: async () => {
+          const newToken = localStorage.getItem('accessToken');
+          if (!newToken) {
+            throw new Error("No access token available");
+          }
+          
+          // Retry the original request with the new token
+          return fetch(url, {
+            method,
+            headers: {
+              ...headers,
+              "Authorization": `Bearer ${newToken}`
+            },
+            body: data ? JSON.stringify(data) : undefined,
+            credentials: "include",
+          });
+        }
+      }
+    });
+
+    // Dispatch the event
+    window.dispatchEvent(retryEvent);
+    
+    // Clear token and auth state
     localStorage.removeItem('accessToken');
     setAuthState(false);
-    window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     throw new Error("Unauthorized");
   }
 
@@ -60,7 +86,17 @@ export const getQueryFn: <T>(options: {
       throw new Error("Not authenticated");
     }
 
+    const accessToken = localStorage.getItem('accessToken');
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (accessToken) {
+      headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
     const res = await fetch(queryKey[0] as string, {
+      headers,
       credentials: "include",
     });
 
