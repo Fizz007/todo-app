@@ -22,7 +22,25 @@ export function useAuth() {
     mutationFn: async (credentials: LoginFormData) => {
       setIsLoading(true);
       try {
-        const res = await apiRequest("POST", "http://localhost:5000/api/auth/login/", credentials);
+        // Clear any existing tokens before login attempt
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setAuthState(false);
+
+        const res = await fetch('http://localhost:5000/api/auth/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(credentials),
+          credentials: 'include'
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || 'Login failed');
+        }
+
         const data: AuthResponse = await res.json();
         return data;
       } finally {
@@ -30,6 +48,7 @@ export function useAuth() {
       }
     },
     onSuccess: (data) => {
+      setAuthState(true);
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
       setAccessToken(data.accessToken);
@@ -42,6 +61,12 @@ export function useAuth() {
       navigate("/");
     },
     onError: (error: Error) => {
+      setAuthState(false);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
       toast({
         title: "Login failed",
         description: error.message,
@@ -54,8 +79,26 @@ export function useAuth() {
     mutationFn: async (credentials: SignupFormData) => {
       setIsLoading(true);
       try {
+        // Clear any existing tokens before signup attempt
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        setAuthState(false);
+
         const { confirmPassword, ...userData } = credentials;
-        const res = await apiRequest("POST", "http://localhost:5000/api/auth/signup/", userData);
+        const res = await fetch('http://localhost:5000/api/auth/signup/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+          credentials: 'include'
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.message || 'Signup failed');
+        }
+
         const data: AuthResponse = await res.json();
         return data;
       } finally {
@@ -63,6 +106,7 @@ export function useAuth() {
       }
     },
     onSuccess: (data) => {
+      setAuthState(true);
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
       setAccessToken(data.accessToken);
@@ -75,6 +119,12 @@ export function useAuth() {
       navigate("/");
     },
     onError: (error: Error) => {
+      setAuthState(false);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
       toast({
         title: "Signup failed",
         description: error.message,

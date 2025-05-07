@@ -19,10 +19,6 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  if (!isAuthenticated) {
-    throw new Error("Not authenticated");
-  }
-
   const accessToken = localStorage.getItem('accessToken');
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -68,6 +64,7 @@ export async function apiRequest(
     
     // Clear token and auth state
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     setAuthState(false);
     throw new Error("Unauthorized");
   }
