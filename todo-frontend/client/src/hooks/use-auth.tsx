@@ -106,17 +106,12 @@ export function useAuth() {
       }
     },
     onSuccess: (data) => {
-      setAuthState(true);
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-      setAccessToken(data.accessToken);
-      setRefreshToken(data.refreshToken);
-      setUser(data.user);
+      // Don't set auth state or tokens since we want user to log in first
       toast({
         title: "Signup successful",
-        description: `Welcome!`,
+        description: `Please log in to continue`,
       });
-      navigate("/");
+      navigate("/auth");
     },
     onError: (error: Error) => {
       setAuthState(false);
@@ -180,7 +175,7 @@ export function useAuth() {
     isAuthenticated: !!user,
     isLoading,
     login: loginMutation.mutate,
-    signup: signupMutation.mutate,
+    signup: (data: SignupFormData) => signupMutation.mutateAsync(data),
     logout: logoutMutation.mutate,
   };
 }

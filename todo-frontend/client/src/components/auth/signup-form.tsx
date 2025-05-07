@@ -39,7 +39,8 @@ export function SignupForm({ onShowLogin }: SignupFormProps) {
   const onSubmit = async (data: SignupFormData) => {
     setError(null);
     try {
-      signup(data);
+      await signup(data);
+      onShowLogin();
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
