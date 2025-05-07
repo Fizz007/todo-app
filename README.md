@@ -37,12 +37,15 @@ A fullstack To-Do list application built with **React**, **Express.js**, **Mongo
 ---
 
 
+
 ### 📦 Backend
 
 ```bash
 cd backend
 npm install
 npm run dev
+
+```
 
 ### 📦 Frontend
 
@@ -51,9 +54,7 @@ cd frontend
 npm install
 npm run dev
 
-## 🧪 Demo Login
+```
 
-Use the following credentials to test the app:
 
-Email: faisal@gmail.com
-Password: 1234
+
