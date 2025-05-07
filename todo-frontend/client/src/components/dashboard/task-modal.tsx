@@ -139,8 +139,8 @@ export function TaskModal({ isOpen, task, onClose, onSave, isSubmitting }: TaskM
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem disabled={!isEditing} value="in-progress">In Progress</SelectItem>
+                      <SelectItem disabled={!isEditing} value="completed">Completed</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
