@@ -43,6 +43,7 @@ A fullstack To-Do list application built with **React**, **Express.js**, **Mongo
 ```bash
 cd backend
 npm install
+npm install --save-dev ts-node-dev
 npm run dev
 
 ```
