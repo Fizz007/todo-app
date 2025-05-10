@@ -39,8 +39,8 @@ export default function Dashboard() {
   } = useQuery({
     queryKey: ["todos"],
     queryFn: async () => {
-      const response = await apiRequest("GET", "http://localhost:5000/api/todos");
-      return response.json();
+      return await apiRequest("GET", "http://localhost:5000/api/todos");
+    ;
     },
     retry: 1,
     gcTime: 0,
@@ -103,7 +103,7 @@ export default function Dashboard() {
   const createTodoMutation = useMutation({
     mutationFn: async (todoData: TodoFormData) => {
       const res = await apiRequest("POST", "http://localhost:5000/api/todos", todoData);
-      return res.json() as Promise<Todo>;
+      return res ;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
@@ -126,7 +126,7 @@ export default function Dashboard() {
   const updateTodoMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: TodoFormData }) => {
       const res = await apiRequest("PUT", `http://localhost:5000/api/todos/${id}`, data);
-      return res.json();
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
