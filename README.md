@@ -53,7 +53,21 @@ npm run dev
 ```bash
 cd frontend
 npm install
-npm run dev
+
+```
+
+### Screenshot 1
+![Screenshot 1](![Screenshot 2025-05-14 130116](https://github.com/user-attachments/assets/a9146ad3-aed3-4970-a708-de3899fa41d9)
+)
+
+### Screenshot 2
+![Screenshot 2](![Screenshot 2025-05-14 130159](https://github.com/user-attachments/assets/2dcd8bad-446a-4c66-8db0-e9f3f5891ea1)
+)
+
+### Screenshot 3
+![Screenshot 3](![Screenshot 2025-05-14 130225](https://github.com/user-attachments/assets/af85af51-541d-4fd6-bddd-4833b8dff38f)
+)
+
 
 ```
 
