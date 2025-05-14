@@ -56,6 +56,15 @@ npm install
 
 ```
 
+## 🔐 Demo Login
+
+Use the following credentials to log in and explore the app:
+
+- **Email:** faisal@gmail.com  
+- **Password:** 1234
+
+---
+
 ### Screenshot 1
 ![Screenshot 2025-05-14 130116](https://github.com/user-attachments/assets/a9146ad3-aed3-4970-a708-de3899fa41d9)
 
